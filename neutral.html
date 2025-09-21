@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZenZone</title>
+<style>
+  /* Reset & base */
+  *{margin:0;padding:0;box-sizing:border-box;font-family:"Segoe UI",Tahoma,Verdana,sans-serif;transition:all 0.25s ease;}
+  body{
+    background: linear-gradient(135deg,#f0f0f0,#dcdcdc);
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    opacity:0;
+    transition:opacity 0.6s ease;
+  }
+  body.loaded{opacity:1;}
+
+  /* Navbar */
+  nav{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:0.9rem 1.6rem;background:#fff;
+    border-radius:40px;margin:1rem auto;
+    max-width:1200px;width:92%;
+    box-shadow:0 8px 24px rgba(18,35,60,0.06);
+    position:sticky;top:1rem;z-index:100;
+  }
+  .logo{font-weight:700;font-size:1.4rem;color:#6c757d;}
+  ul.nav-links{list-style:none;display:flex;gap:1.2rem;flex-grow:1;justify-content:center;}
+  ul.nav-links li{cursor:pointer;font-weight:600;color:#21313a;}
+  ul.nav-links li:hover{color:#6c757d;}
+  .login-btn{background:#6c757d;color:#fff;border:none;padding:0.5rem 1.1rem;border-radius:22px;font-weight:700;cursor:pointer;}
+  .login-btn:hover{background:#495057;}
+
+  /* Container */
+  .container{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;}
+
+  /* Neutral card */
+  .neutral-card{
+    background:#fff;
+    border-radius:20px;
+    padding:2rem 2.5rem;
+    text-align:center;
+    box-shadow:0 8px 28px rgba(108,117,125,0.15);
+    max-width:650px;width:100%;
+    animation:pop 0.8s ease;
+  }
+  @keyframes pop{0%{transform:scale(0.9);opacity:0;}100%{transform:scale(1);opacity:1;}}
+  .emoji{font-size:4rem;margin-bottom:1rem;animation:bounce 2s infinite;}
+  @keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(-5px);}}
+  h1{color:#6c757d;font-size:2.2rem;margin-bottom:0.8rem;}
+  p{color:#444;margin-bottom:1.2rem;line-height:1.5;}
+
+  /* Sections */
+  .section{max-width:1000px;margin:2rem auto;background:#fff;padding:2rem;border-radius:20px;box-shadow:0 8px 20px rgba(0,0,0,0.08);}
+  .section h2{color:#6c757d;margin-bottom:1rem;text-align:center;}
+
+  /* Color Therapy */
+  .color-therapy{display:flex;flex-wrap:wrap;gap:1rem;justify-content:center;}
+  .color-box{flex:1 1 200px;height:140px;border-radius:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:bold;color:#fff;font-size:1rem;flex-direction:column;text-align:center;padding:0.5rem;}
+  .color-box:hover{transform:scale(1.05);}
+  .color-text{font-size:0.9rem;margin-top:0.3rem;}
+
+  /* Affirmations */
+  .affirmations{display:flex;flex-direction:column;gap:1rem;text-align:center;}
+  .affirm-box{background:#f8f9fa;padding:1rem;border-radius:15px;color:#444;font-weight:500;box-shadow:0 4px 12px rgba(0,0,0,0.05);}
+  .affirm-box:hover{transform:translateY(-3px);}
+
+  /* Audio */
+  .section.audio-library { max-width: 1200px; width: 95%; margin: 2rem auto; }
+  .audio-library ul { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 1.8rem; }
+  .audio-library li { width: 100%; }
+  .audio-library p { margin-bottom: 0.6rem; font-weight: 600; color: #333; font-size: 1.2rem; text-align: left; }
+  .audio-library audio { width: 100%; max-width: 100%; height: 70px; border-radius: 15px; box-shadow: 0 6px 14px rgba(0,0,0,0.15); display: block; }
+
+  /* YouTube Video Section */
+  .video-section{
+    max-width:1200px;width:95%;margin:2rem auto;background:#fff;padding:2rem;border-radius:20px;box-shadow:0 8px 20px rgba(0,0,0,0.08);
+  }
+  .video-section h2{color:#6c757d;margin-bottom:1rem;text-align:center;}
+  .video-container{display:flex;flex-wrap:wrap;gap:1.5rem;justify-content:center;}
+  .video-container iframe{width:100%;max-width:500px;height:280px;border-radius:15px;}
+
+  /* Quotes */
+  .quotes{display:flex;flex-direction:column;gap:1rem;}
+  .quote-box{background:#f1f3f5;padding:1rem;border-left:5px solid #6c757d;border-radius:12px;font-style:italic;color:#333;}
+
+  /* News */
+  .news-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.5rem;margin-top:1rem;}
+  .news-card{background:#fff;border-radius:15px;box-shadow:0 6px 16px rgba(0,0,0,0.1);overflow:hidden;display:flex;flex-direction:column;}
+  .news-card img{width:100%;height:180px;object-fit:cover;}
+  .news-card-content{padding:1rem;}
+  .news-card-content h3{font-size:1rem;color:#6c757d;margin-bottom:0.5rem;}
+  .news-card-content p{font-size:0.9rem;color:#555;}
+
+  footer{text-align:center;padding:1rem;color:#555;font-size:0.9rem;margin-top:auto;}
+</style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav>
+    <div class="logo">ZenZone</div>
+    <ul class="nav-links">
+      <li onclick="redirectWithFade('homepage.html')">Home</li>
+      <li onclick="redirectWithFade('dailymood.html')">Mood Check-In</li>
+      <li onclick="redirectWithFade('journal.html')">Journal</li>
+      <li onclick="redirectWithFade('resources.html')">Resources</li>
+    </ul>
+    <button class="login-btn" onclick="redirectWithFade('login.html')">Login</button>
+  </nav>
+
+  <!-- Main Neutral Card -->
+  <div class="container">
+    <div class="neutral-card">
+      <div class="emoji">😐</div>
+      <h1>You’re Feeling Neutral</h1>
+      <p>Your mood is balanced right now. Take a moment to breathe and observe your surroundings without judgment.</p>
+    </div>
+  </div>
+
+  <!-- Color Therapy -->
+  <div class="section">
+    <h2>Color Therapy</h2>
+    <div class="color-therapy" id="color-therapy-section"></div>
+  </div>
+
+  <!-- Affirmations -->
+  <div class="section">
+    <h2>Affirmations</h2>
+    <div class="affirmations">
+      <div class="affirm-box">🌿 I am calm and centered.</div>
+      <div class="affirm-box">⚖️ Balance is within me.</div>
+      <div class="affirm-box">🌾 I accept the present moment.</div>
+    </div>
+  </div>
+
+  <!-- Audio Library -->
+  <div class="section audio-library">
+    <h2>Neutral Tunes</h2>
+    <ul>
+      <li>
+        <p>Gentle Ambient</p>
+        <audio controls><source src="neutral-ambient.mp3" type="audio/mpeg"></audio>
+      </li>
+      <li>
+        <p>Soft Piano</p>
+        <audio controls><source src="neutral-piano.mp3" type="audio/mpeg"></audio>
+      </li>
+    </ul>
+  </div>
+
+  <!-- YouTube Videos -->
+  <div class="video-section">
+    <h2>Neutral & Relaxing Videos</h2>
+    <div class="video-container">
+      <iframe src="https://www.youtube.com/embed/V3Zl6bS4S1g" title="Neutral Video 1" frameborder="0" allowfullscreen></iframe>
+      <iframe src="https://www.youtube.com/embed/eYNpEzt1h18" title="Neutral Video 2" frameborder="0" allowfullscreen></iframe>
+      <iframe src="https://www.youtube.com/embed/fT1ZzVjP2Dc" title="Neutral Video 3" frameborder="0" allowfullscreen></iframe>
+    </div>
+  </div>
+
+  <!-- Quotes -->
+  <div class="section quotes">
+    <h2>Mindful Quotes</h2>
+    <div class="quote-box">"Peace comes from within. Do not seek it without." – Buddha</div>
+    <div class="quote-box">"Life is a balance of holding on and letting go." – Rumi</div>
+  </div>
+
+  <!-- News -->
+  <div class="section">
+    <h2>Neutral News</h2>
+    <div class="news-cards">
+      <div class="news-card">
+        <img src="neutral-news1.jpg" alt="News 1">
+        <div class="news-card-content">
+          <h3>Community Library Expanded 📚</h3>
+          <p>Local library extended hours and space for visitors to enjoy a calm reading environment.</p>
+        </div>
+      </div>
+      <div class="news-card">
+        <img src="neutral-news2.jpg" alt="News 2">
+        <div class="news-card-content">
+          <h3>Park Renovation Completed 🌳</h3>
+          <p>Neighborhood park refurbished with benches and walking paths for a peaceful stroll.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>© 2025 ByteX | Stay Balanced ⚖️</footer>
+
+<script>
+window.addEventListener("DOMContentLoaded", ()=>{
+  document.body.classList.add("loaded");
+
+  // Dynamic Color Therapy
+  const colors = [
+    {bg:'#B0B0B0', text:'Calm Gray'},
+    {bg:'#A0D6B4', text:'Soft Green'},
+    {bg:'#D6CFC4', text:'Neutral Beige'},
+    {bg:'#B0C4DE', text:'Peaceful Blue'},
+    {bg:'#C0C0C0', text:'Focus on colour to feel relaxed'}
+  ];
+  const colorSection = document.getElementById('color-therapy-section');
+  colors.forEach(c=>{
+    const box = document.createElement('div');
+    box.className='color-box';
+    box.innerHTML=`<div>${c.text}</div>`;
+    box.style.background=c.bg;
+    colorSection.appendChild(box);
+  });
+});
+
+// Smooth redirect
+function redirectWithFade(url){
+  document.body.style.opacity="0";
+  setTimeout(()=> window.location.href = url,600);
+}
+</script>
+</body>
+</html>

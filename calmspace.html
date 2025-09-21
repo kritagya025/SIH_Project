@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZenZone</title>
+<style>
+  /* Reset & transitions */
+  * {
+    margin:0; padding:0; box-sizing:border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    transition: all 0.3s ease-in-out;
+  }
+
+  body {
+    min-height:100vh;
+    background: linear-gradient(135deg, #d4f1f4, #f1faee);
+    color:#2c3e50;
+    opacity:0;
+    transition: opacity 0.7s ease-in-out;
+  }
+  body.loaded { opacity:1; }
+  body.fade-out { opacity:0; }
+
+  nav {
+    display:flex; justify-content:space-between; align-items:center;
+    padding:0.8rem 2rem; background:#ffffff; border-radius:50px;
+    margin:1.5rem auto; max-width:1200px; width:90%;
+    box-shadow:0 6px 25px rgba(0,0,0,0.1); position:sticky; top:1rem; z-index:100;
+  }
+  .logo { font-size:1.5rem; font-weight:bold; color:#3a7bd5; }
+  nav ul { list-style:none; display:flex; gap:2rem; flex-grow:1; justify-content:center; }
+  nav ul li { font-size:1rem; font-weight:500; cursor:pointer; color:#2c3e50; }
+  nav ul li:hover { color:#3a7bd5; }
+  .login-btn { padding:0.5rem 1.3rem; background:#3a7bd5; color:#fff; border:none; border-radius:25px; cursor:pointer; font-weight:500; }
+  .login-btn:hover { background:#285a99; }
+  .hamburger { display:none; flex-direction:column; gap:5px; cursor:pointer; }
+  .hamburger div { width:25px; height:3px; background:#2c3e50; border-radius:2px; }
+
+  .hero { max-width:1000px; margin:3rem auto 2rem auto; text-align:center; padding:2rem;
+    background:#ffffffcc; border-radius:25px; box-shadow:0 8px 25px rgba(0,0,0,0.08);
+    animation:fadeInUp 0.8s ease forwards;
+  }
+  .hero h1 { font-size:2.8rem; margin-bottom:0.5rem; color:#2e8b57; }
+  .hero p { font-size:1.2rem; color:#555; margin-bottom:2rem; }
+
+  .section { max-width:1000px; margin:2rem auto; background:#ffffffcc;
+    padding:2rem; border-radius:25px; box-shadow:0 8px 25px rgba(0,0,0,0.08);
+  }
+  .section h2 { color:#2e8b57; margin-bottom:1rem; }
+  .section p, .section ul { color:#555; margin-bottom:1rem; line-height:1.5; }
+
+  .color-therapy { display:flex; flex-wrap:wrap; gap:1rem; margin-top:1rem; }
+  .color-box {
+    flex:1 1 180px; height:120px; border-radius:12px; cursor:pointer;
+    display:flex; align-items:center; justify-content:center; transition: transform 0.3s, flex 0.3s; overflow:hidden;
+  }
+  .color-box:hover { transform:scale(1.05); }
+  .color-text {
+    opacity:0; color:#fff; font-weight:bold; text-align:center;
+    padding:0.5rem; text-shadow:1px 1px 4px rgba(0,0,0,0.5); transition: opacity 0.3s;
+  }
+  .color-box.expanded .color-text { opacity:1; }
+
+  .audio-library ul { list-style:none; padding:0; }
+  .audio-library li { margin-bottom:1.2rem; }
+  .audio-library p { margin-bottom:0.5rem; font-weight:500; }
+  .audio-library audio { width:100%; border-radius:10px; }
+
+  iframe { width:100%; height:315px; border:none; border-radius:15px; margin-top:1rem; }
+
+  .quotes { display:flex; flex-direction:column; gap:1rem; }
+  .quote-box { background:#f0fff9; padding:1rem; border-left:5px solid #2e8b57; border-radius:12px; font-style:italic; color:#333; transition:transform 0.3s; }
+  .quote-box:hover { transform:translateY(-5px); }
+
+  footer { text-align:center; padding:1.5rem; background:rgba(255,255,255,0.9); color:#555; font-size:0.9rem; margin-top:2rem; box-shadow:0 -2px 10px rgba(0,0,0,0.05); }
+
+  @keyframes fadeInUp { 0% { opacity:0; transform:translateY(20px); } 100% { opacity:1; transform:translateY(0); } }
+
+  @media (max-width:900px) {
+    nav ul { position:fixed; top:80px; right:-100%; flex-direction:column; background:#ffffff; gap:1.5rem; padding:2rem; border-radius:25px; box-shadow:0 8px 25px rgba(0,0,0,0.1); transition:right 0.4s ease; }
+    nav ul.active { right:20px; }
+    .hamburger { display:flex; }
+  }
+</style>
+</head>
+<body>
+<nav>
+  <div class="logo">ZenZone</div>
+  <ul id="nav-links">
+    <li onclick="redirectWithFade('homepage.html')">Home</li>
+    <li onclick="redirectWithFade('dailymood.html')">Mood Check-In</li>
+    <li onclick="redirectWithFade('journal.html')">Journal</li>
+    <li onclick="redirectWithFade('resources.html')">Resources</li>
+  </ul>
+  <button class="login-btn" onclick="redirectWithFade('login.html')">Login</button>
+  <div class="hamburger" id="hamburger"><div></div><div></div><div></div></div>
+</nav>
+
+<section class="hero">
+  <h1>Calm Space</h1>
+  <p>Relax, reflect, and recharge your mind anytime you need.</p>
+</section>
+
+<!-- Guided Meditation -->
+<div class="section" id="meditation-section">
+  <h2>Guided Meditation</h2>
+</div>
+
+<!-- Breathing Exercises -->
+<div class="section" id="breathing-section">
+  <h2>Breathing Exercises</h2>
+  <ul></ul>
+</div>
+
+<!-- Color Therapy -->
+<div class="section color-therapy" id="color-therapy-section">
+  <h2>Color Therapy</h2>
+</div>
+
+<!-- Audio Library -->
+<div class="section audio-library" id="audio-section">
+  <h2>Calming Audio</h2>
+  <ul></ul>
+</div>
+
+<!-- Mindful Quotes -->
+<div class="section quotes" id="quotes-section">
+  <h2>Mindful Quotes</h2>
+</div>
+
+<!-- Relaxing Video -->
+<div class="section" id="video-section">
+  <h2>Relaxing Video</h2>
+</div>
+
+<footer>
+  © 2025 ByteX | Designed for Student Well-being
+</footer>
+
+<script>
+window.addEventListener('DOMContentLoaded', () => {
+  document.body.classList.add('loaded');
+
+  // ----- Dynamic Color Boxes -----
+  const colors = ['#a8dadc','#f1faee','#457b9d','#2a9d8f','#ffb4a2','#ffafcc','#ffd6a5','#b5ead7'];
+  const colorSection = document.getElementById('color-therapy-section');
+  for(let i=0;i<5;i++){
+    const box = document.createElement('div');
+    box.className = 'color-box';
+    const color = colors[Math.floor(Math.random()*colors.length)];
+    box.style.background = color;
+    const text = document.createElement('span');
+    text.className='color-text';
+    text.textContent = ["Peace is within you","Calmness is your superpower","Let go of tension","Every breath brings clarity","Feel stress-free"][Math.floor(Math.random()*5)];
+    box.appendChild(text);
+    box.addEventListener('click', ()=> box.classList.toggle('expanded'));
+    colorSection.appendChild(box);
+  }
+
+  // ----- Dynamic Breathing Exercises -----
+  const breathingExercises = [
+    'Box Breathing: Inhale 4s → Hold 4s → Exhale 4s → Hold 4s, repeat.',
+    '4-7-8 Breathing: Inhale 4s → Hold 7s → Exhale 8s.',
+    'Alternate Nostril Breathing: Close alternate nostrils while breathing slowly.',
+    'Deep Belly Breathing: Inhale deeply through the nose, expand your belly, exhale slowly.'
+  ];
+  const breathingUl = document.querySelector('#breathing-section ul');
+  breathingExercises.sort(()=>0.5-Math.random()).forEach(ex=>{const li=document.createElement('li'); li.textContent=ex; breathingUl.appendChild(li);});
+
+  // ----- Dynamic Meditation Videos -----
+  const meditationVideos = [
+    'https://www.youtube.com/embed/inpok4MKVLM',
+    'https://www.youtube.com/embed/MIr3RsUWrdo',
+    'https://www.youtube.com/embed/ZToicYcHIOU'
+  ];
+  const medSection = document.getElementById('meditation-section');
+  meditationVideos.sort(()=>0.5-Math.random()).slice(0,2).forEach(url=>{
+    const iframe=document.createElement('iframe');
+    iframe.src=url; iframe.allowFullscreen=true;
+    medSection.appendChild(iframe);
+  });
+
+   // ----- Dynamic Audio -----  
+  const audioLibrary = [
+    {title:'🌊 Ocean Waves', src:'sea-waves-169411.mp3'},
+    {title:'🎵 Soft Piano', src:'soft-piano-music-394948.mp3'},
+    {title:'🌿 Forest Sounds', src:'forest-sounds.mp3'},
+    {title:'🌧 Rain Ambience', src:'rain-sound.mp3'}
+  ];
+  const audioUl = document.querySelector('#audio-section ul');
+  audioLibrary.forEach(audio=>{
+    const li = document.createElement('li');
+    const p = document.createElement('p'); p.textContent = audio.title;
+    const a = document.createElement('audio'); a.controls = true;
+    const src = document.createElement('source'); src.src = audio.src; src.type = 'audio/mpeg';
+    a.appendChild(src);
+    li.appendChild(p); li.appendChild(a);
+    audioUl.appendChild(li);
+  });
+
+  // ----- Dynamic Quotes -----  
+  const quotes = [
+    "Peace comes from within. Do not seek it without. – Buddha",
+    "Calm mind brings inner strength. – Dalai Lama",
+    "Take a deep breath, and let it go.",
+    "Serenity is not freedom from the storm, but peace amid the storm.",
+    "Inhale the future, exhale the past."
+  ];
+  const quotesSection = document.getElementById('quotes-section');
+  quotes.sort(()=>0.5-Math.random()).forEach(q=>{
+    const div = document.createElement('div'); div.className='quote-box'; div.textContent=q;
+    quotesSection.appendChild(div);
+  });
+
+  // ----- Dynamic Relaxing Video -----  
+  const relaxVideos = [
+    'https://www.youtube.com/embed/2OEL4P1Rz04',
+    'https://www.youtube.com/embed/1ZYbU82GVz4',
+    'https://www.youtube.com/embed/QJ1KX3KwzZM'
+  ];
+  const videoSection = document.getElementById('video-section');
+  relaxVideos.sort(()=>0.5-Math.random()).slice(0,2).forEach(url=>{
+    const iframe = document.createElement('iframe');
+    iframe.src = url; iframe.allowFullscreen = true;
+    videoSection.appendChild(iframe);
+  });
+});
+
+// ----- Smooth Redirect with Fade -----  
+function redirectWithFade(url){
+  document.body.classList.add('fade-out');
+  setTimeout(()=>{ window.location.href = url; }, 700);
+}
+
+// ----- Hamburger Toggle -----  
+const hamburger = document.getElementById('hamburger');
+const navLinks = document.getElementById('nav-links');
+hamburger.addEventListener('click', () => {
+  navLinks.classList.toggle('active');
+  hamburger.classList.toggle('open');
+});
+</script>
+</body>
+</html>

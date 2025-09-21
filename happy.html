@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZenZone</title>
+<style>
+  /* Reset & base */
+  *{margin:0;padding:0;box-sizing:border-box;font-family:"Segoe UI",Tahoma,Verdana,sans-serif;transition:all 0.25s ease;}
+  body{ 
+    background: linear-gradient(135deg,#fff7d1,#ffe27a); 
+    min-height:100vh; 
+    display:flex; 
+    flex-direction:column; 
+    opacity:0; 
+    transition:opacity 0.6s ease; 
+  } 
+  body.loaded{opacity:1;}
+
+  /* Navbar */
+  nav{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:0.9rem 1.6rem;background:#fff;
+    border-radius:40px;margin:1rem auto;
+    max-width:1200px;width:92%;
+    box-shadow:0 8px 24px rgba(18,35,60,0.06);
+    position:sticky;top:1rem;z-index:100;
+  }
+  .logo{font-weight:700;font-size:1.4rem;color:#3a7bd5;}
+  ul.nav-links{list-style:none;display:flex;gap:1.2rem;flex-grow:1;justify-content:center;}
+  ul.nav-links li{cursor:pointer;font-weight:600;color:#21313a;}
+  ul.nav-links li:hover{color:#3a7bd5;}
+  .login-btn{background:#3a7bd5;color:#fff;border:none;padding:0.5rem 1.1rem;border-radius:22px;font-weight:700;cursor:pointer;}
+  .login-btn:hover{background:#285a99;}
+
+  /* Container */
+  .container{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;}
+
+  /* Happy card */
+  .happy-card{
+    background:#fff;
+    border-radius:20px;
+    padding:2rem 2.5rem;
+    text-align:center;
+    box-shadow:0 8px 28px rgba(255,200,0,0.15);
+    max-width:650px;width:100%;
+    animation:pop 0.8s ease;
+  }
+  @keyframes pop{0%{transform:scale(0.9);opacity:0;}100%{transform:scale(1);opacity:1;}}
+
+  .emoji{
+    font-size:4rem;
+    margin-bottom:1rem;
+    animation:bounce 2s infinite;
+  }
+  @keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);} }
+
+  h1{color:#ffb100;font-size:2.2rem;margin-bottom:0.8rem;}
+  p{color:#444;margin-bottom:1.2rem;line-height:1.5;}
+
+  /* Sections */
+  .section{max-width:1000px;margin:2rem auto;background:#fff;padding:2rem;border-radius:20px;box-shadow:0 8px 20px rgba(0,0,0,0.08);}
+  .section h2{color:#d48806;margin-bottom:1rem;text-align:center;}
+
+  /* Color Therapy */
+  .color-therapy{display:flex;flex-wrap:wrap;gap:1rem;justify-content:center;}
+  .color-box{
+    flex:1 1 200px;height:140px;border-radius:15px;
+    cursor:pointer;display:flex;align-items:center;justify-content:center;
+    font-weight:bold;color:#fff;font-size:1.1rem;
+    box-shadow:0 4px 12px rgba(0,0,0,0.1);
+    transition: transform 0.3s;
+  }
+  .color-box:hover{transform:scale(1.05);}
+
+  /* Affirmations */
+  .affirmations{display:flex;flex-direction:column;gap:1rem;text-align:center;}
+  .affirm-box{background:#fff9db;padding:1rem;border-radius:15px;color:#444;font-weight:500;box-shadow:0 4px 12px rgba(0,0,0,0.05);}
+  .affirm-box:hover{transform:translateY(-3px);}
+
+  /* Audio */
+  .section.audio-library {
+    max-width: 1200px;
+    width: 95%;
+    margin: 2rem auto;
+  }
+  .audio-library ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.8rem;
+  }
+  .audio-library li { width: 100%; }
+  .audio-library p {
+    margin-bottom: 0.6rem;
+    font-weight: 600;
+    color: #333;
+    font-size: 1.2rem;
+    text-align: left;
+  }
+  .audio-library audio {
+    width: 100%;
+    max-width: 100%;
+    height: 70px;
+    border-radius: 15px;
+    box-shadow: 0 6px 14px rgba(0,0,0,0.15);
+    display: block;
+  }
+
+  /* YouTube Videos */
+  .video-section {
+    max-width: 1200px;
+    width: 95%;
+    margin: 2rem auto;
+    background: #fff;
+    padding: 2rem;
+    border-radius: 20px;
+    box-shadow:0 8px 20px rgba(0,0,0,0.08);
+  }
+  .video-section h2 {
+    color: #d48806;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+  .video-section .video-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    justify-content: center;
+  }
+  .video-container iframe {
+    width: 100%;
+    max-width: 500px;
+    height: 280px;
+    border-radius: 15px;
+  }
+
+  /* Quotes */
+  .quotes{display:flex;flex-direction:column;gap:1rem;}
+  .quote-box{background:#fff7e6;padding:1rem;border-left:5px solid #ffb100;border-radius:12px;font-style:italic;color:#333;}
+
+  /* News */
+  .news-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1.5rem;margin-top:1rem;}
+  .news-card{background:#fff;border-radius:15px;box-shadow:0 6px 16px rgba(0,0,0,0.1);overflow:hidden;display:flex;flex-direction:column;}
+  .news-card img{width:100%;height:180px;object-fit:cover;}
+  .news-card-content{padding:1rem;}
+  .news-card-content h3{font-size:1.1rem;color:#ff9800;margin-bottom:0.5rem;}
+  .news-card-content p{font-size:0.95rem;color:#555;}
+
+  footer{text-align:center;padding:1rem;color:#555;font-size:0.9rem;margin-top:auto;}
+</style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav>
+    <div class="logo">ZenZone</div>
+    <ul class="nav-links">
+      <li onclick="redirectWithFade('homepage.html')">Home</li>
+      <li onclick="redirectWithFade('dailymood.html')">Mood Check-In</li>
+      <li onclick="redirectWithFade('journal.html')">Journal</li>
+      <li onclick="redirectWithFade('resources.html')">Resources</li>
+    </ul>
+    <button class="login-btn" onclick="redirectWithFade('login.html')">Login</button>
+  </nav>
+
+  <!-- Main Happy Card -->
+  <div class="container">
+    <div class="happy-card">
+      <div class="emoji">🌞</div>
+      <h1>You’re Feeling Happy!</h1>
+      <p>That’s wonderful — happiness boosts your energy and inspires those around you. Celebrate the moment and spread the joy!</p>
+    </div>
+  </div>
+
+  <!-- Color Therapy -->
+  <div class="section">
+    <h2>Color Therapy</h2>
+    <p style="text-align:center;color:#555;font-size:1rem;margin-bottom:1rem;">
+      Focus on a color that resonates with you to feel relaxed and uplifted.
+    </p>
+    <div class="color-therapy" id="color-therapy"></div>
+  </div>
+
+  <!-- Positive Affirmations -->
+  <div class="section">
+    <h2>Positive Affirmations</h2>
+    <div class="affirmations">
+      <div class="affirm-box">🌟 I choose happiness in every moment.</div>
+      <div class="affirm-box">💛 My smile brightens the world.</div>
+      <div class="affirm-box">🌈 I attract positivity and joy.</div>
+    </div>
+  </div>
+
+  <!-- Audio Library -->
+  <div class="section audio-library">
+    <h2>Happy Tunes</h2>
+    <ul>
+      <li>
+        <p>Upbeat Morning</p>
+        <audio controls><source src="happy-morning.mp3" type="audio/mpeg"></audio>
+      </li>
+      <li>
+        <p>Cheerful Guitar</p>
+        <audio controls><source src="happy-guitar.mp3" type="audio/mpeg"></audio>
+      </li>
+    </ul>
+  </div>
+
+  <!-- YouTube Videos Section -->
+  <div class="video-section">
+    <h2>Happy & Relaxing Videos</h2>
+    <div class="video-container">
+      <iframe src="https://www.youtube.com/embed/d-diB65scQU" title="Happy Video 1" frameborder="0" allowfullscreen></iframe>
+      <iframe src="https://www.youtube.com/embed/ZbZSe6N_BXs" title="Happy Video 2" frameborder="0" allowfullscreen></iframe>
+      <iframe src="https://www.youtube.com/embed/2Vv-BfVoq4g" title="Happy Video 3" frameborder="0" allowfullscreen></iframe>
+    </div>
+  </div>
+
+  <!-- Quotes -->
+  <div class="section quotes">
+    <h2>Uplifting Quotes</h2>
+    <div class="quote-box">"Happiness is not something ready-made. It comes from your own actions." – Dalai Lama</div>
+    <div class="quote-box">"Count your age by friends, not years. Count your life by smiles, not tears." – John Lennon</div>
+  </div>
+
+  <!-- News -->
+  <div class="section">
+    <h2>Happy News</h2>
+    <div class="news-cards">
+      <div class="news-card">
+        <img src="happy-news1.jpg" alt="Good News">
+        <div class="news-card-content">
+          <h3>New Community Garden Opens 🌱</h3>
+          <p>Local students turned an empty lot into a colorful garden, bringing joy to the neighborhood.</p>
+        </div>
+      </div>
+      <div class="news-card">
+        <img src="happy-news2.jpg" alt="Positive Story">
+        <div class="news-card-content">
+          <h3>Stray Dog Adopted 🐶</h3>
+          <p>A rescued pup found its forever home, spreading love and smiles everywhere.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>© 2025 ByteX | Keep Smiling 💛</footer>
+
+<script>
+window.addEventListener("DOMContentLoaded", ()=>{
+  document.body.classList.add("loaded");
+
+  // ----- Dynamic Color Boxes -----
+  const colors = ['#FFD93D','#FF9A3D','#FF6F61','#6DD47E','#6ECFF6','#FF7EC7','#B39CFF','#FFDA6B'];
+  const texts = ["Peace is within you","Calmness is your superpower","Let go of tension","Every breath brings clarity","Feel stress-free"];
+  const colorContainer = document.getElementById("color-therapy");
+  for(let i=0;i<6;i++){
+    const box = document.createElement("div");
+    box.className="color-box";
+    box.style.background = colors[Math.floor(Math.random()*colors.length)];
+    box.textContent = texts[Math.floor(Math.random()*texts.length)];
+    colorContainer.appendChild(box);
+  }
+});
+
+// Smooth redirect
+function redirectWithFade(url){
+  document.body.style.opacity="0";
+  setTimeout(()=> window.location.href = url,600);
+}
+</script>
+</body>
+</html>

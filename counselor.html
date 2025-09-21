@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>ZenZone</title>
+<style>
+  /* Reset & base */
+  * { margin:0; padding:0; box-sizing:border-box; font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; -webkit-font-smoothing:antialiased; transition: all 0.25s ease-in-out; }
+  html,body{height:100%;}
+  body {
+    min-height:100vh;
+    background: linear-gradient(135deg,#f0f7ff,#eef9f2);
+    color:#21313a;
+    opacity:0;
+    transition: opacity 0.6s ease;
+    display:flex;
+    flex-direction:column;
+  }
+  body.loaded{ opacity:1; }
+
+  /* Navbar (consistent with app) */
+  nav{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:0.9rem 1.6rem;
+    background:#fff;
+    border-radius:40px;
+    margin:1rem auto;
+    max-width:1200px;
+    width:92%;
+    box-shadow:0 8px 24px rgba(18,35,60,0.06);
+    position:sticky; top:1rem; z-index:100;
+  }
+  .logo{ font-weight:700; font-size:1.4rem; color:#3a7bd5; }
+  ul.nav-links{ list-style:none; display:flex; gap:1.2rem; flex-grow:1; justify-content:center; margin:0 1rem; padding:0; }
+  ul.nav-links li{ color:#21313a; font-weight:600; cursor:pointer; }
+  ul.nav-links li:hover{ color:#3a7bd5; }
+  .login-btn{ background:#3a7bd5; color:#fff; border:none; padding:0.5rem 1.1rem; border-radius:22px; cursor:pointer; font-weight:700; }
+  .login-btn:hover{ background:#285a99; }
+
+  /* Layout */
+  .container{ max-width:1100px; margin:2rem auto; width:94%; display:grid; grid-template-columns: 1fr 420px; gap:2rem; align-items:center; }
+  @media (max-width:980px){ .container{ grid-template-columns: 1fr; padding-bottom:2rem; } }
+
+  /* Left: big message & hero */
+  .hero-card{
+    background: linear-gradient(180deg, #ffffff, #fbfdff);
+    border-radius:18px;
+    padding:2.2rem;
+    box-shadow:0 12px 30px rgba(10,30,60,0.06);
+    display:flex;
+    gap:1.5rem;
+    align-items:center;
+  }
+  .hero-left{
+    flex:1;
+    padding-right:0.5rem;
+  }
+  .status-badge{
+    display:inline-block; background:#ffe9d6; color:#b44d00; padding:6px 10px; border-radius:999px; font-weight:700; font-size:0.9rem; margin-bottom:0.9rem;
+  }
+  h1.big{
+    font-size:2.6rem; line-height:1; margin-bottom:0.6rem; color:#1f3b4a;
+    letter-spacing: -1px;
+  }
+  p.lead{ color:#3b4d55; margin-bottom:1rem; font-size:1rem; }
+  .muted{ color:#6b7a80; font-size:0.95rem; }
+
+  /* Under development visual */
+  .dev-wrap{
+    display:flex; gap:1rem; align-items:center; justify-content:flex-start; margin-top:1rem;
+  }
+  .dev-graphic{
+    width:180px; height:180px; border-radius:14px;
+    background: linear-gradient(135deg,#e6f4fb,#f7fbf3);
+    display:flex; align-items:center; justify-content:center;
+    box-shadow: 0 10px 30px rgba(50,80,120,0.06);
+    position:relative; overflow:hidden;
+  }
+  /* small animated "construction" SVG look */
+  .gear{
+    width:90px; height:90px; transform-origin:center; animation:spin 6s linear infinite;
+    opacity:0.95;
+  }
+  @keyframes spin{ from{transform:rotate(0)} to{transform:rotate(360deg)} }
+
+  /* Right: disabled booking form */
+  .panel{
+    background:#fff; border-radius:14px; padding:1.6rem;
+    box-shadow: 0 10px 30px rgba(12,30,60,0.05);
+  }
+  .panel h3{ color:#2e8b57; margin-bottom:0.6rem; }
+  .form-row{ display:flex; gap:0.6rem; margin-bottom:0.7rem; }
+  .form-row .field{ flex:1; }
+  label{ display:block; font-size:0.85rem; color:#4b5b61; margin-bottom:0.35rem; }
+  input, select, textarea{
+    width:100%; padding:0.65rem 0.8rem; border-radius:10px; border:1px solid #e6eef2;
+    background:#fbfeff; font-size:0.95rem; color:#233238;
+  }
+  textarea{ min-height:90px; resize:vertical; }
+  .disabled-note{ font-size:0.9rem; color:#6b7a80; margin:0.8rem 0; }
+
+  .cta-row{ display:flex; gap:0.7rem; align-items:center; margin-top:0.6rem; }
+  .btn-primary{ background:#2e8b57; color:#fff; border:none; padding:0.65rem 1rem; border-radius:12px; font-weight:700; cursor:not-allowed; opacity:0.85; }
+  .btn-muted{ background:#f0f4f8; color:#456; border:none; padding:0.6rem 0.9rem; border-radius:12px; font-weight:700; cursor:pointer; }
+  .note-small{ font-size:0.83rem; color:#65747b; margin-top:0.6rem; }
+
+  /* Footer */
+  footer{ margin-top:auto; text-align:center; padding:1.6rem 0; color:#6b7a80; font-size:0.9rem; }
+
+  /* small responsive tweaks */
+  @media (max-width:640px){
+    h1.big{ font-size:2rem; }
+    .dev-graphic{ width:140px; height:140px; }
+  }
+</style>
+</head>
+<body>
+  <nav>
+    <div class="logo">ZenZone</div>
+    <ul class="nav-links" id="nav-links">
+      <li onclick="redirectWithFade('homepage.html')">Home</li>
+      <li onclick="redirectWithFade('dailymood.html')">Mood Check-In</li>
+      <li onclick="redirectWithFade('journal.html')">Journal</li>
+      <li onclick="redirectWithFade('resources.html')">Resources</li>
+    </ul>
+    <button class="login-btn" onclick="redirectWithFade('login.html')">Login</button>
+    <div class="hamburger" id="hamburger" style="display:none;"><div></div><div></div><div></div></div>
+  </nav>
+
+  <main class="container" role="main">
+    <!-- LEFT: message -->
+    <section class="hero-card" aria-labelledby="page-title">
+      <div class="hero-left">
+        <span class="status-badge">COMING SOON</span>
+        <h1 id="page-title" class="big">Book a Counselor</h1>
+        <p class="lead">Professional, confidential support — we’re building this for you. For now, this feature is being polished and will launch very soon.</p>
+
+        <div class="dev-wrap">
+          <div class="dev-graphic" aria-hidden="true">
+            <!-- Inline SVG gear illustration -->
+            <svg class="gear" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Gear">
+              <defs>
+                <linearGradient id="g1" x1="0" x2="1">
+                  <stop offset="0" stop-color="#8fd3f4"/>
+                  <stop offset="1" stop-color="#3a7bd5"/>
+                </linearGradient>
+              </defs>
+              <g transform="translate(50,50)">
+                <path d="M0,-28 L6,-24 L14,-25 L18,-18 L26,-14 L24,-6 L30,0 L24,6 L26,14 L18,18 L14,25 L6,24 L0,28 L-6,24 L-14,25 L-18,18 L-26,14 L-24,6 L-30,0 L-24,-6 L-26,-14 L-18,-18 L-14,-25 L-6,-24 Z" fill="url(#g1)"/>
+                <circle r="9" fill="#fff" />
+                <circle r="5" fill="#3a7bd5" />
+              </g>
+            </svg>
+          </div>
+
+          <div>
+            <h2 style="margin-bottom:0.4rem; font-size:1.25rem;">UNDER DEVELOPMENT</h2>
+            <p class="muted">We’re building a secure booking flow, counselor profiles, availability and private chat. Meanwhile, you can use the contact option to request priority access.</p>
+            <p class="note-small">Expect this to be live within the next few weeks — we’ll keep improving it based on student feedback.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RIGHT: placeholder booking form (disabled) -->
+    <aside class="panel" aria-label="Booking placeholder">
+      <h3>Request a Booking (Disabled)</h3>
+      <form onsubmit="return false;" aria-disabled="true">
+        <div class="form-row">
+          <div class="field">
+            <label for="name">Full name</label>
+            <input id="name" type="text" placeholder="Your name" disabled />
+          </div>
+          <div class="field">
+            <label for="email">Email</label>
+            <input id="email" type="email" placeholder="you@example.com" disabled />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="field">
+            <label for="topic">Reason / Topic</label>
+            <select id="topic" disabled>
+              <option>Choose a topic</option>
+              <option>Stress & Anxiety</option>
+              <option>Relationship</option>
+              <option>Academic Pressure</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="field">
+            <label for="notes">Notes</label>
+            <textarea id="notes" placeholder="Briefly describe what you'd like help with" disabled></textarea>
+          </div>
+        </div>
+
+        <div class="disabled-note">This booking form is temporarily disabled while we finalize counselor availability and privacy features.</div>
+
+        <div class="cta-row">
+          <button class="btn-primary" disabled>Book a Counselor</button>
+          <button class="btn-muted" type="button" onclick="contactSupport()">Contact Support</button>
+        </div>
+
+        <div class="note-small">Prefer urgent help? If you or someone is at risk, contact local emergency services or your campus crisis line immediately.</div>
+      </form>
+    </aside>
+  </main>
+
+  <footer>
+    © 2025 ByteX | Designed for Student Well-being
+  </footer>
+
+<script>
+  // page fade-in
+  window.addEventListener('DOMContentLoaded', ()=> document.body.classList.add('loaded'));
+
+  // smooth redirect used across site
+  function redirectWithFade(url){
+    document.body.classList.add('fade-out');
+    setTimeout(()=> window.location.href = url, 600);
+  }
+
+  // Contact support: open mailto (or show message)
+  function contactSupport(){
+    // opens mail client, adjust address if you have one
+    const subject = encodeURIComponent('Counselor booking request — ByteX');
+    const body = encodeURIComponent('Hi team,\n\nI would like to request early access to the Book a Counselor feature.\n\nName:\nEmail:\nPreferred times:\nNotes:\n\nThanks.');
+    window.location.href = `mailto:support@bytex.example?subject=${subject}&body=${body}`;
+  }
+</script>
+</body>
+</html>
